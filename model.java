@@ -2,10 +2,10 @@ import java.sql.*;
 import javax.swing.*;
 import java.util.*;
 
-class model extends JFrame
+class Model extends JFrame
 {
     private int bdid;
-    private String bdtipo, bdaltera;
+    private String bdtipo, bdnome, bdaltera;
     private String fsql;
     private String url, usuario, senha, drive;
     private Connection con;
@@ -16,24 +16,29 @@ class model extends JFrame
     public Model()
     {
         bdid = 0;
+        bdtipo = "";
         bdnome = "";
         bdaltera = "";
         fsql = "";
         con = null;
         usuario = "postgres";
-        senha = "sqladmin";
+        senha = "tijolo123";
         drive = "org.postgresql.Driver";
-        url = "jdbc:postgresql://localhost:5432/banco73b2017";
-        url = "jdbc:postgresql://200.145.153.163:5432/banco73b2017";
+        url = "jdbc:postgresql://localhost:5433/hardware";
+        //url="jdbc:postgresql://200.145.153.175:5433/hardware";
     }
     
     public void setId(String c)
     {
         bdid = Integer.parseInt(c);
     }
-    public void setTipo(String n)
+    public void setTipo(String t)
     {
-        bdtipo = n;
+        bdtipo = t;
+    }
+    public void setNome(String n)
+    {
+        bdnome = n;
     }
     public void setAltera(String a)
     {
@@ -47,6 +52,10 @@ class model extends JFrame
     {
         return bdtipo;
     }
+    public String getNome()
+    {
+        return bdnome;
+    }
     public String getAltera()
     {
         return bdaltera;
@@ -59,7 +68,7 @@ class model extends JFrame
         {
             pstmt = con.prepareStatement(fsql);
             pstmt.setString(1,bdtipo);
-            if(pstmt.execute() == null)
+            if(!pstmt.execute())
             {
                 JOptionPane.showMessageDialog(null,"Erro no cadastro!!");
             }
@@ -77,7 +86,7 @@ class model extends JFrame
         {
             pstmt = con.prepareStatement(fsql);
             pstmt.setInt(1,bdid);
-            if(pstmt.execute() == null)
+            if(!pstmt.execute())
             {
                 JOptionPane.showMessageDialog(null,"Erro na exclusao!!");
             }
@@ -96,7 +105,7 @@ class model extends JFrame
             pstmt = con.prepareStatement(fsql);
             pstmt.setString(1,bdnome);
             pstmt.setInt(2,bdid);
-            if(pstmt.execute() == null)
+            if(!pstmt.execute())
             {
                 JOptionPane.showMessageDialog(null,"Erro na alteracao!!");
             }
@@ -113,7 +122,6 @@ class model extends JFrame
         {
             Class.forName(drive);
             con = DriverManager.getConnection(url,usuario,senha);
-            //JOptionPane.showMessageDialog(null,"ok");
         }
         catch(Exception erro)
         {
@@ -218,4 +226,13 @@ class model extends JFrame
         }
         return volta;
     }
+
+    public static void main(String tx[])
+    {
+        Model e = new Model();
+        e.connect();
+        e.disconnect();
+    }
+
+
 }
