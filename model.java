@@ -5,7 +5,7 @@ import java.util.*;
 class Model extends JFrame
 {
     private int bdid;
-    private String bdtipo, bdaltera, bdnome;
+    private String bdtipo, bdnome, bdaltera;
     private String fsql;
     private String url, usuario, senha, drive;
     private Connection con;
@@ -16,6 +16,7 @@ class Model extends JFrame
     public Model()
     {
         bdid = 0;
+        bdtipo = "";
         bdnome = "";
         bdaltera = "";
         fsql = "";
@@ -23,16 +24,21 @@ class Model extends JFrame
         usuario = "postgres";
         senha = "tijolo123";
         drive = "org.postgresql.Driver";
-        url = "jdbc:postgresql://localhost:5433/";
+        url = "jdbc:postgresql://localhost:5433/hardware";
+        //url="jdbc:postgresql://200.145.153.175:5433/hardware";
     }
     
     public void setId(String c)
     {
         bdid = Integer.parseInt(c);
     }
-    public void setTipo(String n)
+    public void setTipo(String t)
     {
-        bdtipo = n;
+        bdtipo = t;
+    }
+    public void setNome(String n)
+    {
+        bdnome = n;
     }
     public void setAltera(String a)
     {
@@ -46,6 +52,10 @@ class Model extends JFrame
     {
         return bdtipo;
     }
+    public String getNome()
+    {
+        return bdnome;
+    }
     public String getAltera()
     {
         return bdaltera;
@@ -58,7 +68,10 @@ class Model extends JFrame
         {
             pstmt = con.prepareStatement(fsql);
             pstmt.setString(1,bdtipo);
-            pstmt.execute();
+            if(!pstmt.execute())
+            {
+                JOptionPane.showMessageDialog(null,"Erro no cadastro!!");
+            }
             pstmt.close();
         }
         catch(Exception erro)
@@ -73,7 +86,10 @@ class Model extends JFrame
         {
             pstmt = con.prepareStatement(fsql);
             pstmt.setInt(1,bdid);
-            pstmt.execute();
+            if(!pstmt.execute())
+            {
+                JOptionPane.showMessageDialog(null,"Erro na exclusao!!");
+            }
             pstmt.close();
         }
         catch(Exception erro)
@@ -89,7 +105,10 @@ class Model extends JFrame
             pstmt = con.prepareStatement(fsql);
             pstmt.setString(1,bdnome);
             pstmt.setInt(2,bdid);
-            pstmt.execute();
+            if(!pstmt.execute())
+            {
+                JOptionPane.showMessageDialog(null,"Erro na alteracao!!");
+            }
             pstmt.close();
         }
         catch(Exception erro)
@@ -97,8 +116,7 @@ class Model extends JFrame
             JOptionPane.showMessageDialog(null,"Erro na alteracao: " + erro);
         }
     }
-
-    public void conecta()
+    public void connect()
     {
         try
         {
@@ -110,7 +128,7 @@ class Model extends JFrame
             JOptionPane.showMessageDialog(null,"Erro na conexao: " + erro);
         }
     }
-    public void desconecta()
+    public void disconnect()
     {
         try
         {
@@ -121,11 +139,11 @@ class Model extends JFrame
             JOptionPane.showMessageDialog(null,"Erro na desconexao: " + erro);
         }
     }
-
-    public ArrayList pegarDados()
+    public ArrayList pegadados()
     {
-        ArrayList dados = new ArrayList();
-        fsql = "select * from pecas";
+        ArrayList dados;
+        dados = new ArrayList();
+        fsql = "select * from tabela2";
         try
         {
             stmt = con.createStatement();
@@ -133,7 +151,7 @@ class Model extends JFrame
             while(rs.next())
             {
                 bdid = rs.getInt("id");
-                bdtipo = rs.getString("nome");
+                bdtipo = rs.getString("tipo");
                 dados.add(bdid);
                 dados.add(bdnome);
             }
@@ -141,14 +159,13 @@ class Model extends JFrame
         }
         catch(Exception erro)
         {
-            JOptionPane.showMessageDialog(null,"Erro na leitura: " + erro);
+            JOptionPane.showMessageDialog(null,"Erro na leitura:" + erro);
         }
         return dados;
     }
-    
-    public boolean procuraId(String id)
+    public boolean procura(String id)
     {
-        fsql = "select * from pecas where id=?";
+        fsql = "Select * from tabela2 where id=?";
         try
         {
             pstmt = con.prepareStatement(fsql);
@@ -163,33 +180,13 @@ class Model extends JFrame
         }
         catch(Exception erroi)
         {
-            JOptionPane.showMessageDialog(null,"Erro procura: " + erroi);
+            JOptionPane.showMessageDialog(null,"Erro procura:" + erroi);
         }
         return false;
     }
-    public boolean procuraNome(String nome)
+    public String pegatipo(String id)
     {
-        fsql = "select * from pecas where nome=?";
-        try
-        {
-            pstmt = con.prepareStatement(fsql);
-            pstmt.setString(1, nome);
-            rs = pstmt.executeQuery();
-            if(rs.next())
-            {
-                return true;
-            }
-            pstmt.close();
-        }
-        catch(Exception erroi)
-        {
-            JOptionPane.showMessageDialog(null,"Erro procura: " + erroi);
-        }
-        return false;
-    }
-    public String pegaNome(String id)
-    {
-        fsql = "select * from pecas where id=?";
+        fsql = "Select * from tabela2 where id=?";
         try
         {
             pstmt = con.prepareStatement(fsql);
@@ -198,7 +195,7 @@ class Model extends JFrame
             rs = pstmt.executeQuery();
             if(rs.next())
             {
-                return rs.getString("nome");
+                return rs.getString("tipo");
             }
             pstmt.close();
         }
@@ -208,11 +205,10 @@ class Model extends JFrame
         }
         return "vazio";
     }
-    
     public String retorna()
     {
         String volta = "";
-        fsql = "select * from pecas";
+        fsql = "select * from tabela2";
         try
         {
             stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -220,6 +216,7 @@ class Model extends JFrame
             if(rs.last())
             {
                 volta = rs.getString("id");
+                //JOptionPane.showMessageDialog(null,"ultimo"+volta);
                 return volta;
             }
         }
@@ -229,4 +226,13 @@ class Model extends JFrame
         }
         return volta;
     }
+
+    public static void main(String tx[])
+    {
+        Model e = new Model();
+        e.connect();
+        e.disconnect();
+    }
+
+
 }
