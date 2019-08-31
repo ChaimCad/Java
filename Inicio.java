@@ -15,6 +15,7 @@ class Inicio extends JFrame implements ActionListener
         setLayout(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setBounds(400,200,600,400);
+        setResizable(false);
 
         lblTitulo = new JLabel("[Nome do bagui]");
         lblTexto1 = new JLabel("saldkjhbasdjfhnasjdfasdjfasdjfdjfnasdklfjnasdlfkjnasdlfijnSDLFIJASDLJFHNASJHFGBKLJASDJFLASDFJHASBF");
