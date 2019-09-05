@@ -13,7 +13,8 @@ class Cadastro extends JFrame implements ActionListener, KeyListener
     String nome, email, senha;
     int idade;
 
-    Model mod;
+    //Model mod;
+    BancoUsuario bu;
 
     public Cadastro()
     {
@@ -29,7 +30,8 @@ class Cadastro extends JFrame implements ActionListener, KeyListener
         email = "";
         senha = "";
 
-        mod = new Model();
+        //mod = new Model();
+        bu = new BancoUsuario();
 
         model = new SpinnerNumberModel(15, 15, 90, 1);
 
@@ -130,10 +132,10 @@ class Cadastro extends JFrame implements ActionListener, KeyListener
                 }
                 
                 String tudo = nome + "," + idade + "," + email + "," + senha;
-                mod.setTipo(tudo);
-                mod.connect();
-                mod.cadastro();
-                mod.disconnect();
+                bu.setTipo(tudo);
+                bu.connect();
+                bu.inserir();
+                bu.disconnect();
             }
         }
         else if(ae.getSource() == btnVoltar)

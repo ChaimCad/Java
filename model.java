@@ -139,11 +139,11 @@ class Model extends JFrame
             JOptionPane.showMessageDialog(null,"Erro na desconexao: " + erro);
         }
     }
-    public ArrayList pegadados()
+    public ArrayList pegadados(String tabela)
     {
         ArrayList dados;
         dados = new ArrayList();
-        fsql = "select * from tabela2";
+        fsql = "select * from " + tabela;
         try
         {
             stmt = con.createStatement();
@@ -163,14 +163,14 @@ class Model extends JFrame
         }
         return dados;
     }
-    public boolean procura(String id)
+    public boolean procura(String id, String tabela)
     {
-        fsql = "Select * from tabela2 where id=?";
+        fsql = "Select * from " + tabela + " where id=?";
         try
         {
             pstmt = con.prepareStatement(fsql);
             int idd = Integer.parseInt(id);
-            pstmt.setInt(1, idd);
+            pstmt.setInt(1,idd);
             rs = pstmt.executeQuery();
             if(rs.next())
             {
@@ -184,9 +184,9 @@ class Model extends JFrame
         }
         return false;
     }
-    public String pegatipo(String id)
+    public String pegatipo(String id, String tabela)
     {
-        fsql = "Select * from tabela2 where id=?";
+        fsql = "Select * from " + tabela + " where id=?";
         try
         {
             pstmt = con.prepareStatement(fsql);
@@ -205,10 +205,10 @@ class Model extends JFrame
         }
         return "vazio";
     }
-    public String retorna()
+    public String retorna(String tabela)
     {
         String volta = "";
-        fsql = "select * from tabela2";
+        fsql = "select * from " + tabela;
         try
         {
             stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -233,6 +233,4 @@ class Model extends JFrame
         e.connect();
         e.disconnect();
     }
-
-
 }
