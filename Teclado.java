@@ -32,6 +32,6 @@ class Teclado extends JFrame implements KeyListener
         setVisible(true);
     }
     public static void main(String[] args) {
-        new teclado();
+        new Teclado();
     }
 }

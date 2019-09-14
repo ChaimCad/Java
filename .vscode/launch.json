@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Inicio",
+            "request": "launch",
+            "mainClass": "Inicio",
+            "projectName": "Java_160fb455"
+        }
+    ]
+}
