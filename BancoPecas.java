@@ -4,8 +4,7 @@ import java.util.*;
 
 class BancoPecas extends JFrame
 {
-    private int bdid;
-    private String bdtipo, bdnome, bdaltera, fsql, url, usuario, senha, drive;
+    private String bdid, bdnome, bdespec, bdgarantia, fsql, url, usuario, senha, drive;
     private Connection con;
     private ResultSet rs;
     private PreparedStatement pstmt;
@@ -13,59 +12,62 @@ class BancoPecas extends JFrame
 
     public BancoPecas()
     {
-        bdid = 0;
-        bdtipo = "";
+        bdid = "";
         bdnome = "";
-        bdaltera = "";
+        bdespec = "";
+        bdgarantia = "";
         fsql = "";
         con = null;
         usuario = "postgres";
-        senha = "tijolo123";
+        senha = "postgres";
         drive = "org.postgresql.Driver";
-        url = "jdbc:postgresql://localhost:5433/hardware";
+        url = "jdbc:postgresql://localhost:5432/hardware";
     }
     
-    public int getId()
+    public String getId()
     {
         return this.bdid;
-    }
-    public String getTipo()
-    {
-        return this.bdtipo;
     }
     public String getNome()
     {
         return this.bdnome;
     }
-    public String getAltera()
+    public String getEspec()
     {
-        return this.bdaltera;
+        return this.bdespec;
+    }
+    public String getGarantia()
+    {
+        return this.bdgarantia;
     }
 
     public void setId(String id)
     {
-        this.bdid = Integer.parseInt(id);
-    }
-    public void setTipo(String tipo)
-    {
-        this.bdtipo = tipo;
+        this.bdid = id;
     }
     public void setNome(String nome)
     {
         this.bdnome = nome;
     }
-    public void setAltera(String altera)
+    public void setEspec(String espec)
     {
-        this.bdaltera = altera;
+        this.bdespec = espec;
+    }
+    public void setGarantia(String garantia)
+    {
+        this.bdgarantia = garantia;
     }
 
 
     public void connect()
     {
-        try
+    	try
         {
-            Class.forName(drive);
-            con = DriverManager.getConnection(url,usuario,senha);
+        	if(con == null)
+    		{
+	            Class.forName(drive);
+	            con = DriverManager.getConnection(url,usuario,senha);
+    		}
         }
         catch(Exception erro)
         {
@@ -77,25 +79,59 @@ class BancoPecas extends JFrame
         try
         {
             con.close();
+            con = null;
         }
         catch(Exception erro)
         {
             JOptionPane.showMessageDialog(null,"Erro na desconexao: " + erro);
         }
     }
-    
+
+	public ArrayList pegadados()
+    {
+        ArrayList dados;
+        dados = new ArrayList();
+        fsql = "select * from pecas order by id";
+        try
+        {
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(fsql);
+            while(rs.next())
+            {
+                bdid = rs.getString("id");
+                bdnome = rs.getString("nome");
+                bdespec = rs.getString("espec");
+                bdgarantia = rs.getString("garantia");
+                
+                dados.add(bdid);
+                dados.add(bdnome);
+                dados.add(bdespec);
+                dados.add(bdgarantia);
+            }
+            
+            stmt.close();
+        }
+        catch(Exception erro)
+        {
+            JOptionPane.showMessageDialog(null,"Erro na leitura:" + erro);
+        }
+        return dados;
+    }
 
     public void inserir()
     {
-        fsql = "insert into pecas(id,nome,espec,garantia) values (DEFAULT,?)";
+        fsql = "insert into pecas (id,nome,espec,garantia) values (?,?,?,?)";
         try
         {
             pstmt = con.prepareStatement(fsql);
-            pstmt.setString(1,bdtipo);
-            if(!pstmt.execute())
-            {
-                JOptionPane.showMessageDialog(null,"Erro no cadastro!!");
-            }
+            
+            pstmt.setInt(1,Integer.parseInt(bdid));
+            pstmt.setString(2,bdnome);
+            pstmt.setString(3,bdespec);
+            pstmt.setString(4,bdgarantia);
+            
+            pstmt.execute();
+            
             pstmt.close();
         }
         catch(Exception erro)
@@ -109,11 +145,10 @@ class BancoPecas extends JFrame
         try
         {
             pstmt = con.prepareStatement(fsql);
-            pstmt.setInt(1,bdid);
-            if(!pstmt.execute())
-            {
-                JOptionPane.showMessageDialog(null,"Erro na exclusao!!");
-            }
+            pstmt.setInt(1,Integer.parseInt(bdid));
+            
+            pstmt.execute();
+            
             pstmt.close();
         }
         catch(Exception erro)
@@ -123,17 +158,18 @@ class BancoPecas extends JFrame
     }
     public void alterar()
     {
-        fsql = "update pecas set ?=? where id=?";
+        fsql = "update pecas set nome=?, espec=?, garantia=? where id=?";
         try
         {
             pstmt = con.prepareStatement(fsql);
-            pstmt.setString(1,bdaltera);
-            pstmt.setString(2,bdnome);
-            pstmt.setInt(3,bdid);
-            if(!pstmt.execute())
-            {
-                JOptionPane.showMessageDialog(null,"Erro na alteracao!!");
-            }
+            
+            pstmt.setString(1,bdnome);
+            pstmt.setString(2,bdespec);
+            pstmt.setString(3,bdgarantia);
+            pstmt.setInt(4,Integer.parseInt(bdid));
+            
+            pstmt.execute();
+            
             pstmt.close();
         }
         catch(Exception erro)

@@ -1,3 +1,13 @@
+drop table if exists pecas;
+
+create table pecas
+(
+	id serial not null primary key,
+	nome varchar(30) not null,
+	espec varchar(200) not null,
+	garantia varchar(12)
+);
+
 drop table if exists usuario;
 
 create table usuario
@@ -6,16 +16,7 @@ create table usuario
 	nome varchar(30) not null,
 	idade integer not null,
 	email varchar(30) not null,
-	senha varchar(10) not null
-);
-
-
-drop table if exists pecas;
-
-create table pecas
-(
-	id serial not null primary key,
-	nome varchar(30) not null,
-	espec varchar(200) not null,
-	garantia integer
+	senha varchar(10) not null,
+	id_peca BIGINT,
+    CONSTRAINT fk_peca FOREIGN KEY (id_peca) REFERENCES pecas (id)
 );

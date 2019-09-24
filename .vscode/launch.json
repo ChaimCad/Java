@@ -2,6 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Menu",
+            "request": "launch",
+            "mainClass": "Menu",
+            "projectName": "Java_160fb455"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - SqlUsu",
+            "request": "launch",
+            "mainClass": "SqlUsu",
+            "projectName": "Java_160fb455"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Sqltipo",
+            "request": "launch",
+            "mainClass": "Sqltipo",
+            "projectName": "Java_160fb455"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Inicio",
             "request": "launch",
             "mainClass": "Inicio",

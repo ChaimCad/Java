@@ -4,8 +4,7 @@ import java.util.*;
 
 class BancoUsuario extends JFrame
 {
-    private int bdid;
-    private String bdtipo, bdnome, bdaltera, fsql, url, usuario, senha, drive;
+    private String bdid, bdnome, bdidade, bdemail, bdsenha, bdfkPeca, fsql, url, usuario, senha, drive;
     private Connection con;
     private ResultSet rs;
     private PreparedStatement pstmt;
@@ -13,59 +12,80 @@ class BancoUsuario extends JFrame
 
     public BancoUsuario()
     {
-        bdid = 0;
-        bdtipo = "";
+        bdid = "";
         bdnome = "";
-        bdaltera = "";
+        bdidade = "";
+        bdemail = "";
+        bdsenha = "";
+        bdfkPeca = "";
         fsql = "";
         con = null;
         usuario = "postgres";
-        senha = "tijolo123";
+        senha = "postgres";
         drive = "org.postgresql.Driver";
-        url = "jdbc:postgresql://localhost:5433/hardware";
+        url = "jdbc:postgresql://localhost:5432/hardware";
     }
     
-    public int getId()
+    public String getId()
     {
         return this.bdid;
-    }
-    public String getTipo()
-    {
-        return this.bdtipo;
     }
     public String getNome()
     {
         return this.bdnome;
     }
-    public String getAltera()
+    public String getIdade()
     {
-        return this.bdaltera;
+        return this.bdidade;
+    }
+    public String getEmail()
+    {
+        return this.bdemail;
+    }
+    public String getSenha()
+    {
+        return this.bdsenha;
+    }
+    public String getIdPeca()
+    {
+    	return this.bdfkPeca;
     }
 
     public void setId(String id)
     {
-        this.bdid = Integer.parseInt(id);
-    }
-    public void setTipo(String tipo)
-    {
-        this.bdtipo = tipo;
+        this.bdid = id;
     }
     public void setNome(String nome)
     {
         this.bdnome = nome;
     }
-    public void setAltera(String altera)
+    public void setIdade(String idade)
     {
-        this.bdaltera = altera;
+        this.bdidade = idade;
+    }
+    public void setEmail(String email)
+    {
+        this.bdemail = email;
+    }
+    public void setSenha(String senha)
+    {
+        this.bdsenha = senha;
+    }
+    public void setIdPeca(String idPeca)
+    {
+    	this.bdfkPeca = idPeca;
     }
 
 
     public void connect()
     {
-        try
+    	try
         {
-            Class.forName(drive);
-            con = DriverManager.getConnection(url,usuario,senha);
+        	if(con == null)
+    		{
+	            Class.forName(drive);
+	            con = DriverManager.getConnection(url,usuario,senha);
+    		}
         }
         catch(Exception erro)
         {
@@ -77,6 +97,7 @@ class BancoUsuario extends JFrame
         try
         {
             con.close();
+            con = null;
         }
         catch(Exception erro)
         {
@@ -84,18 +105,57 @@ class BancoUsuario extends JFrame
         }
     }
 
+	public ArrayList pegadados()
+    {
+        ArrayList dados;
+        dados = new ArrayList();
+        fsql = "select * from usuario order by id";
+        try
+        {
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(fsql);
+            while(rs.next())
+            {
+                bdid = rs.getString("id");
+                bdnome = rs.getString("nome");
+                bdidade = rs.getString("idade");
+                bdemail = rs.getString("email");
+                bdsenha = rs.getString("senha");
+                bdfkPeca = rs.getString("id_peca");
+                
+                dados.add(bdid);
+                dados.add(bdnome);
+                dados.add(bdidade);
+                dados.add(bdemail);
+                dados.add(bdsenha);
+                dados.add(bdfkPeca);
+            }
+            
+            stmt.close();
+        }
+        catch(Exception erro)
+        {
+            JOptionPane.showMessageDialog(null,"Erro na leitura:" + erro);
+        }
+        return dados;
+    }
 
     public void inserir()
     {
-        fsql = "insert into usuario(id,nome,idade,email,senha) values (DEFAULT,?)";
+        fsql = "insert into usuario (id,nome,idade,email,senha,id_peca) values (?,?,?,?,?,?)";
         try
         {
             pstmt = con.prepareStatement(fsql);
-            pstmt.setString(1,bdtipo);
-            if(!pstmt.execute())
-            {
-                JOptionPane.showMessageDialog(null,"Erro no cadastro!!");
-            }
+            
+            pstmt.setInt(1,Integer.parseInt(bdid));
+            pstmt.setString(2,bdnome);
+            pstmt.setInt(3,Integer.parseInt(bdidade));
+            pstmt.setString(4,bdemail);
+            pstmt.setString(5,bdsenha);
+            pstmt.setInt(6,Integer.parseInt(bdfkPeca));
+            
+            pstmt.execute();
+            
             pstmt.close();
         }
         catch(Exception erro)
@@ -109,11 +169,10 @@ class BancoUsuario extends JFrame
         try
         {
             pstmt = con.prepareStatement(fsql);
-            pstmt.setInt(1,bdid);
-            if(!pstmt.execute())
-            {
-                JOptionPane.showMessageDialog(null,"Erro na exclusao!!");
-            }
+            pstmt.setInt(1,Integer.parseInt(bdid));
+            
+            pstmt.execute();
+            
             pstmt.close();
         }
         catch(Exception erro)
@@ -123,17 +182,20 @@ class BancoUsuario extends JFrame
     }
     public void alterar()
     {
-        fsql = "update usuario set ?=? where id=?";
+        fsql = "update usuario set nome=?, idade=?, email=?, senha=?, id_peca=? where id=?";
         try
         {
             pstmt = con.prepareStatement(fsql);
-            pstmt.setString(1,bdaltera);
-            pstmt.setString(2,bdnome);
-            pstmt.setInt(3,bdid);
-            if(!pstmt.execute())
-            {
-                JOptionPane.showMessageDialog(null,"Erro na alteracao!!");
-            }
+            
+            pstmt.setString(1,bdnome);
+            pstmt.setInt(2,Integer.parseInt(bdidade));
+            pstmt.setString(3,bdemail);
+            pstmt.setString(4,bdsenha);
+            pstmt.setInt(5,Integer.parseInt(bdfkPeca));
+            pstmt.setInt(6,Integer.parseInt(bdid));
+            
+            pstmt.execute();
+            
             pstmt.close();
         }
         catch(Exception erro)
