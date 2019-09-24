@@ -24,9 +24,9 @@ public class RelatorioPecas
         try
         {
             con = null;
-            String url = "jdbc:postgresql://localhost:5432/hardware";
+            String url = "jdbc:postgresql://localhost:5433/hardware";
             String usuario = "postgres";
-            String senha = "postgres";
+            String senha = "tijolo123";
             String driver = "org.postgresql.Driver";
        
             Class.forName(driver);
@@ -37,7 +37,7 @@ public class RelatorioPecas
             jrRS = new JRResultSetDataSource(rs);
             parametros = new HashMap();
             
-            JasperPrint impressao = JasperFillManager.fillReport("C:\\Users\\ra1757034\\report_Pecas.jasper",parametros,jrRS);
+            JasperPrint impressao = JasperFillManager.fillReport("C:\\Users\\ra1757034\\Desktop\\Java\\report_Pecas.jasper",parametros,jrRS);
             JasperViewer viewer = new JasperViewer(impressao,false);
             viewer.show();
         
